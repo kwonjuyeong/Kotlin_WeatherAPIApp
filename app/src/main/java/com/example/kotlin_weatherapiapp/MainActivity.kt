@@ -96,6 +96,47 @@ class MainActivity : AppCompatActivity() {
 
             cancelProgressDialog()
             Log.i("JSON RESPONCE RESULT", result)
+            val jsonObject = JSONObject(result)
+
+            //json 객체에 접근
+            val message = jsonObject.optString("message")
+            Log.i("Message", message)
+            //Int형 객체이므로 optInt 사용하여 접근
+            val userId = jsonObject.optInt("user_id")
+            Log.i("User Id", "$userId")
+            val name = jsonObject.optString("name")
+            Log.i("Name", "$name")
+            val email = jsonObject.optString("email")
+            Log.i("Email", "$email")
+            val mobileNumber = jsonObject.optLong("mobile")
+            Log.i("Mobile", "$mobileNumber")
+
+            //객체 안에 새로운 객체를 정의해준다.
+            val profileDetailsObject = jsonObject.optJSONObject("profile_details")
+
+            val isProfileCompleted = profileDetailsObject.optBoolean("is_profile_completed")
+            Log.i("Is Profile Completed", "$isProfileCompleted")
+            val rating = profileDetailsObject.optDouble("rating")
+            Log.i("Rating", "$rating")
+
+
+            //data_list라는 오브젝트 정의
+            val dataListArray = jsonObject.optJSONArray("data_list")
+
+            Log.i("Data List Size", "${dataListArray.length()}")
+
+            //data_list 안에는 id와 value 값이 들어있고 총 3개의 객체가 존재한다.
+            //따라서 for문을 이용해 길이만큼 계산해준다.
+            for (item in 0 until dataListArray.length()) {
+                Log.i("Value $item", "${dataListArray[item]}")
+
+                val dataItemObject: JSONObject = dataListArray[item] as JSONObject
+
+                val id = dataItemObject.optString("id")
+                Log.i("ID", "$id")
+                val value = dataItemObject.optString("value")
+                Log.i("Value", "$value")
+            }
         }
 
 
