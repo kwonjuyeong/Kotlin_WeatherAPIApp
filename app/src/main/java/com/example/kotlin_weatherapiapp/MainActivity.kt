@@ -23,10 +23,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        CallAPILoginAsyncTask().execute()
+        CallAPILoginAsyncTask("Kwon", "123456").execute()
     }
 
-    private inner class CallAPILoginAsyncTask() : AsyncTask<Any, Void, String>() {
+    private inner class CallAPILoginAsyncTask(val username: String, val password: String) : AsyncTask<Any, Void, String>() {
 
         // A variable for Custom Progress Dialog
         private lateinit var customProgressDialog: Dialog
@@ -39,16 +39,37 @@ class MainActivity : AppCompatActivity() {
 
         override fun doInBackground(vararg params: Any?): String {
             var result: String
-
-
             var connection: HttpURLConnection? = null
 
             try {
+                //정보를 주는 요청을 어떻게 받고 보내는가
                 val url = URL("http://run.mocky.io/v3/ff9bc8e6-75cd-496d-9b9e-7c75006e41ed")
                 connection = url.openConnection() as HttpURLConnection
 
                 connection.doOutput = true
                 connection.doInput = true
+
+
+                //정보를 전송하는 요청 - POST(READ)를 이용한다.
+                connection.instanceFollowRedirects = false
+
+                connection.requestMethod = "POST"
+                connection.setRequestProperty("Content-Type", "application/json")
+                connection.setRequestProperty("charset", "utf-8")
+                connection.setRequestProperty("Accept", "application/json")
+
+                connection.useCaches = false
+
+                val wr = DataOutputStream(connection.outputStream)
+
+                // 요청.
+                val jsonRequest = JSONObject()
+                jsonRequest.put("username", username)
+                jsonRequest.put("password", password)
+
+                wr.writeBytes(jsonRequest.toString())
+                wr.flush()
+                wr.close()
 
                 val httpResult: Int = connection.responseCode
 
