@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.DataOutputStream
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         CallAPILoginAsyncTask("Kwon", "123456").execute()
     }
 
+    @SuppressLint("StaticFieldLeak")
     private inner class CallAPILoginAsyncTask(val username: String, val password: String) : AsyncTask<Any, Void, String>() {
 
         // A variable for Custom Progress Dialog
@@ -117,6 +119,30 @@ class MainActivity : AppCompatActivity() {
 
             cancelProgressDialog()
             Log.i("JSON RESPONCE RESULT", result)
+
+            //Gson사용
+            //Gson라이브러리를 사용하여 Data클래스에서 불러옴
+            val responseData = Gson().fromJson(result, ResponseData::class.java)
+            //변수를 생성하여 JSON객체 optString 대신 간단하게 사용할 수 있다..
+            Log.i("Message", responseData.message)
+            Log.i("User Id", "${responseData.user_id}")
+            Log.i("Name", responseData.name)
+            Log.i("Email", responseData.email)
+            Log.i("Name", "${responseData.mobile}")
+            Log.i("Is Profile Completed", "${responseData.profile_details.is_profile_completed}")
+            Log.i("Rating", "${responseData.profile_details.rating}")
+            Log.i("Data List Size", "${responseData.data_list.size}")
+
+            for (item in responseData.data_list.indices) {
+                Log.i("Value $item", "${responseData.data_list[item]}")
+
+                Log.i("ID", "${responseData.data_list[item].id}")
+                Log.i("Value", "${responseData.data_list[item].value}")
+            }
+
+
+            //Json 사용
+            /*
             val jsonObject = JSONObject(result)
 
             //json 객체에 접근
@@ -157,7 +183,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i("ID", "$id")
                 val value = dataItemObject.optString("value")
                 Log.i("Value", "$value")
-            }
+            }*/
         }
 
 
